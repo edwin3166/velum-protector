@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VELUM Protector</title>
+  <style>
+    :root {
+      --bg: #08090b;
+      --surface: #111318;
+      --border: #1e2128;
+      --text: #e4e6eb;
+      --muted: #8b8f9a;
+      --accent: #6c5ce7;
+      --accent-hover: #5a4bd1;
+      --success: #00b894;
+      --danger: #e17055;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent), #a29bfe);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: white;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.7rem 0.9rem;
+      color: var(--text);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    textarea {
+      min-height: 180px;
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      font-size: 0.85rem;
+      resize: vertical;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .row { grid-template-columns: 1fr; }
+    }
+
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.4rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    button:hover { background: var(--accent-hover); }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+
+    .result {
+      display: none;
+      margin-top: 1.25rem;
+    }
+
+    .result.show { display: block; }
+
+    .loader-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'Cascadia Code', Consolas, monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 280px;
+      overflow-y: auto;
+      margin-bottom: 0.75rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th { color: var(--muted); font-weight: 500; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-ok { background: rgba(0,184,148,0.15); color: var(--success); }
+    .badge-expired { background: rgba(225,112,85,0.15); color: var(--danger); }
+
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--success);
+      color: #fff;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.25s;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">V</div>
+      <div>
+        <h1>VELUM Protector</h1>
+        <div class="subtitle">Luau scripts protected · executor-locked · never visible in browser</div>
+      </div>
+    </header>
+
+    <!-- Register -->
+    <div class="card">
+      <h2>Protect a new script</h2>
+
+      <label for="name">Script name (optional)</label>
+      <input id="name" type="text" placeholder="e.g. MuscleFarm v3" />
+
+      <div class="row">
+        <div>
+          <label for="expires">Expires in (hours)</label>
+          <input id="expires" type="number" value="720" min="1" />
+        </div>
+        <div>
+          <label for="executor">Allowed executor (from .env)</label>
+          <input id="executor" type="text" disabled value="Loading..." />
+        </div>
+      </div>
+
+      <label for="source">Luau source code</label>
+      <textarea id="source" placeholder="print('Hello from protected script')"></textarea>
+
+      <button id="btnProtect" onclick="protect()">Protect script</button>
+
+      <div id="result" class="result">
+        <div class="meta" id="meta"></div>
+        <div class="loader-box" id="loaderBox"></div>
+        <div class="actions">
+          <button onclick="copyLoader()">Copy loader</button>
+          <button class="btn-secondary" onclick="downloadLoader()">Download .lua</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- List -->
+    <div class="card">
+      <h2>Protected scripts</h2>
+      <div id="listContainer">
+        <p style="color:var(--muted);font-size:0.9rem;">No scripts yet.</p>
+      </div>
+    </div>
+
+    <footer>
+      VELUM · scripts only run inside the allowed executor
+    </footer>
+  </div>
+
+  <div id="toast" class="toast">Copied to clipboard</div>
+
+  <script>
+    const API = '';
+
+    async function loadStatus() {
+      try {
+        const res = await fetch(API + '/api/status');
+        const data = await res.json();
+        document.getElementById('executor').value = data.allowedExecutor || '—';
+      } catch {
+        document.getElementById('executor').value = 'Server offline';
+      }
+    }
+
+    async function protect() {
+      const source = document.getElementById('source').value.trim();
+      const name = document.getElementById('name').value.trim();
+      const expiresInHours = Number(document.getElementById('expires').value) || 720;
+
+      if (!source) {
+        alert('Paste the Luau source first');
+        return;
+      }
+
+      const btn = document.getElementById('btnProtect');
+      btn.disabled = true;
+      btn.textContent = 'Protecting...';
+
+      try {
+        const res = await fetch(API + '/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, source, expiresInHours })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed');
+
+        document.getElementById('meta').textContent =
+          `ID: ${data.id}  ·  Expires: ${new Date(data.expires).toLocaleString()}`;
+        document.getElementById('loaderBox').textContent = data.loader;
+        document.getElementById('result').classList.add('show');
+
+        // store last loader for download
+        window.__lastLoader = data.loader;
+        window.__lastName = data.name || data.id;
+
+        loadList();
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Protect script';
+      }
+    }
+
+    function copyLoader() {
+      const text = document.getElementById('loaderBox').textContent;
+      navigator.clipboard.writeText(text).then(() => showToast());
+    }
+
+    function downloadLoader() {
+      const text = window.__lastLoader || document.getElementById('loaderBox').textContent;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (window.__lastName || 'protected') + '_loader.lua';
+      a.click();
+    }
+
+    async function loadList() {
+      try {
+        const res = await fetch(API + '/api/scripts');
+        const list = await res.json();
+        const container = document.getElementById('listContainer');
+
+        if (!list.length) {
+          container.innerHTML = '<p style="color:var(--muted);font-size:0.9rem;">No scripts yet.</p>';
+          return;
+        }
+
+        let html = `<table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>ID</th>
+              <th>Hits</th>
+              <th>Expires</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+        for (const s of list) {
+          const badge = s.expired
+            ? '<span class="badge badge-expired">expired</span>'
+            : '<span class="badge badge-ok">active</span>';
+
+          html += `<tr>
+            <td>${escapeHtml(s.name)}</td>
+            <td style="font-family:monospace;font-size:0.8rem">${s.id}</td>
+            <td>${s.hits}</td>
+            <td>${new Date(s.expires).toLocaleDateString()} ${badge}</td>
+            <td><button class="btn-danger" style="padding:0.3rem 0.6rem;font-size:0.8rem"
+                  onclick="deleteScript('${s.id}')">Delete</button></td>
+          </tr>`;
+        }
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      } catch {
+        // ignore
+      }
+    }
+
+    async function deleteScript(id) {
+      if (!confirm('Delete this protected script?')) return;
+      await fetch(API + '/api/scripts/' + id, { method: 'DELETE' });
+      loadList();
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    function showToast() {
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 1800);
+    }
+
+    loadStatus();
+    loadList();
+  </script>
+</body>
+</html>
